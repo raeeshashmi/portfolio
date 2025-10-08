@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() => runApp(const RaeesPortfolioApp());
 
@@ -10,8 +11,8 @@ class RaeesPortfolioApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'M. Raees Hashmi - Flutter Developer',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0A0A0F),
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
@@ -32,8 +33,13 @@ class _PortfolioHomeState extends State<PortfolioHome>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
   final PageController _pageController = PageController();
-  final tabs = ['Home', 'Skills', 'Education', 'Experience', 'About'];
-  late AnimationController _bgController;
+  final List<String> tabs = [
+    'Home & About',
+    'Skills',
+    'Education',
+    'Experience',
+  ];
+  late final AnimationController _bgController;
 
   @override
   void initState() {
@@ -54,7 +60,6 @@ class _PortfolioHomeState extends State<PortfolioHome>
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -70,7 +75,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     setState(() => currentIndex = i);
                     _pageController.animateToPage(
                       i,
-                      duration: const Duration(milliseconds: 600),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOutCubicEmphasized,
                     );
                   },
@@ -78,15 +83,13 @@ class _PortfolioHomeState extends State<PortfolioHome>
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() => currentIndex = index);
-                    },
+                    onPageChanged: (index) =>
+                        setState(() => currentIndex = index),
                     children: const [
-                      HomeTab(),
+                      HomeAboutTab(),
                       SkillsTab(),
                       EducationTab(),
                       ExperienceTab(),
-                      AboutTab(),
                     ],
                   ),
                 ),
@@ -98,8 +101,6 @@ class _PortfolioHomeState extends State<PortfolioHome>
     );
   }
 }
-
-// ================= TOP NAV ===================
 
 class TopNavBar extends StatelessWidget {
   final List<String> tabs;
@@ -120,30 +121,27 @@ class TopNavBar extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 32,
-        vertical: isMobile ? 16 : 22,
-      ).copyWith(bottom: 10),
+        vertical: isMobile ? 12 : 20,
+      ),
       child: isMobile
           ? Column(
               children: [
-                GestureDetector(
-                  onTap: () => onTap(0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const NeonBadge(),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Raees Hashmi',
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const NeonBadge(),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Raees Hashmi',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -153,7 +151,7 @@ class TopNavBar extends StatelessWidget {
                       return GestureDetector(
                         onTap: () => onTap(entry.key),
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 250),
                           margin: const EdgeInsets.symmetric(horizontal: 6),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
@@ -195,23 +193,20 @@ class TopNavBar extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: () => onTap(0),
-                  child: Row(
-                    children: [
-                      const NeonBadge(),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Raees Hashmi',
-                        style: GoogleFonts.poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 1.1,
-                        ),
+                Row(
+                  children: [
+                    const NeonBadge(),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Raees Hashmi',
+                      style: GoogleFonts.poppins(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 1.1,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 Row(
                   children: tabs.asMap().entries.map((entry) {
@@ -219,7 +214,7 @@ class TopNavBar extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => onTap(entry.key),
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 250),
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 18,
@@ -289,8 +284,6 @@ class NeonBadge extends StatelessWidget {
   }
 }
 
-// ================= BACKGROUND ===================
-
 class AnimatedGradientBackground extends StatelessWidget {
   final AnimationController controller;
   const AnimatedGradientBackground({super.key, required this.controller});
@@ -299,7 +292,7 @@ class AnimatedGradientBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (context, _) {
+      builder: (_, __) {
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -367,27 +360,51 @@ class GlowCircle extends StatelessWidget {
   }
 }
 
-// ================= HOME TAB ===================
-
-class HomeTab extends StatelessWidget {
-  const HomeTab({super.key});
+// =================== CONTENT TABS ===================
+class HomeAboutTab extends StatelessWidget {
+  const HomeAboutTab({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-    final textAlign = isMobile ? TextAlign.center : TextAlign.start;
-    final crossAlign = isMobile
-        ? CrossAxisAlignment.center
-        : CrossAxisAlignment.start;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Center(
         child: Column(
-          crossAxisAlignment: crossAlign,
+          crossAxisAlignment: isMobile
+              ? CrossAxisAlignment.center
+              : CrossAxisAlignment.start,
           children: [
+            // ===== Profile Image =====
+            Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF00E5FF).withOpacity(0.5),
+                    width: 3,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00E5FF).withOpacity(0.4),
+                      blurRadius: 25,
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'images/profile.jpeg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+
             const Text(
-              '👋 Hello, I’m',
+              'Hello, I’m',
               style: TextStyle(fontSize: 22, color: Colors.white70),
             ),
             const SizedBox(height: 8),
@@ -411,32 +428,9 @@ class HomeTab extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             const FrostedCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.rocket_launch,
-                        color: Color(0xFF00E5FF),
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Currently Working On',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF00E5FF),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'SmartVan — revolutionizing smart transportation using Flutter.',
-                    style: TextStyle(height: 1.5, color: Colors.white70),
-                  ),
-                ],
+              child: Text(
+                'I’m a passionate Flutter Developer focused on creating smooth, scalable, and responsive apps using Flutter, Firebase, and REST APIs.',
+                style: TextStyle(height: 1.6, color: Colors.white70),
               ),
             ),
             const SizedBox(height: 30),
@@ -446,19 +440,19 @@ class HomeTab extends StatelessWidget {
               alignment: WrapAlignment.center,
               children: const [
                 SocialButton(
-                  icon: Icons.email,
+                  icon: FontAwesomeIcons.envelope,
                   label: 'Email',
-                  url: 'mailto:raees@example.com',
+                  url: 'mailto:raeeshashmi987@gmail.com',
                 ),
                 SocialButton(
-                  icon: Icons.code,
+                  icon: FontAwesomeIcons.github,
                   label: 'GitHub',
-                  url: 'https://github.com/yourusername',
+                  url: 'https://github.com/raeeshashmi',
                 ),
                 SocialButton(
-                  icon: Icons.work,
+                  icon: FontAwesomeIcons.linkedin,
                   label: 'LinkedIn',
-                  url: 'https://linkedin.com/in/yourprofile',
+                  url: 'https://linkedin.com/in/raeeshashmi',
                 ),
               ],
             ),
@@ -468,8 +462,6 @@ class HomeTab extends StatelessWidget {
     );
   }
 }
-
-// ================= REUSABLE WIDGETS ===================
 
 class FrostedCard extends StatelessWidget {
   final Widget child;
@@ -515,14 +507,20 @@ class _SocialButtonState extends State<SocialButton> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () async => await launchUrl(Uri.parse(widget.url)),
+        onTap: () async {
+          if (await canLaunchUrl(Uri.parse(widget.url))) {
+            await launchUrl(
+              Uri.parse(widget.url),
+              mode: LaunchMode.externalApplication,
+            );
+          }
+        },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 250),
           transform: Matrix4.identity()
             ..scale(_hovered && !isMobile ? 1.05 : 1.0),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -545,7 +543,7 @@ class _SocialButtonState extends State<SocialButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(widget.icon, color: const Color(0xFF00E5FF), size: 16),
+              FaIcon(widget.icon, color: const Color(0xFF00E5FF), size: 16),
               const SizedBox(width: 8),
               Text(
                 widget.label,
@@ -559,11 +557,10 @@ class _SocialButtonState extends State<SocialButton> {
   }
 }
 
-// ================= OTHER TABS ===================
+// ========= SKILLS / EDUCATION / EXPERIENCE =========
 
 class SkillsTab extends StatelessWidget {
   const SkillsTab({super.key});
-
   @override
   Widget build(BuildContext context) {
     final skills = [
@@ -573,29 +570,29 @@ class SkillsTab extends StatelessWidget {
       'REST API Integration',
       'Git & GitHub',
       'UI/UX Design',
-      'Node.js Basics',
-      'OOP / DSA',
     ];
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
-      child: Wrap(
-        spacing: 18,
-        runSpacing: 18,
-        alignment: WrapAlignment.center,
-        children: skills
-            .map(
-              (skill) => FrostedCard(
-                child: Text(
-                  skill,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+      child: Center(
+        child: Wrap(
+          spacing: 18,
+          runSpacing: 18,
+          alignment: WrapAlignment.center,
+          children: skills
+              .map(
+                (s) => FrostedCard(
+                  child: Text(
+                    s,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-            )
-            .toList(),
+              )
+              .toList(),
+        ),
       ),
     );
   }
@@ -603,36 +600,42 @@ class SkillsTab extends StatelessWidget {
 
 class EducationTab extends StatelessWidget {
   const EducationTab({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            FrostedCard(
-              child: ListTile(
-                title: Text(
-                  'Bachelor of Science (BSc), Computer Science',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          FrostedCard(
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.white24,
+                backgroundImage: AssetImage(
+                  'images/uni_logo.png',
                 ),
-                subtitle: Text('University of Karachi (UBIT) • 2021 – 2025'),
               ),
-            ),
-            SizedBox(height: 20),
-            FrostedCard(
-              child: ListTile(
-                title: Text(
-                  'Flutter Internship',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                subtitle: Text('NexinIt • Jan 2024 – Jun 2024'),
+              title: Text(
+                'BSc Computer Science',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
+              subtitle: Text('University of Karachi • Jan 2021 - Dec 2024'),
             ),
-          ],
-        ),
+          ),
+          FrostedCard(
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.white24,
+                backgroundImage: AssetImage('images/college_logo.jpeg'),
+              ),
+              title: Text(
+                'FSc Pre-Engineering',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              subtitle: Text('Bahria College Karsaz Karachi • 2018 - 2020'),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -640,70 +643,26 @@ class EducationTab extends StatelessWidget {
 
 class ExperienceTab extends StatelessWidget {
   const ExperienceTab({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            FrostedCard(
-              child: ListTile(
-                title: Text(
-                  'Flutter Developer',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                subtitle: Text('i9Experts • SmartVan Project'),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        children: const [
+          FrostedCard(
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.white24,
+                backgroundImage: AssetImage('images/i9_logo.jpeg'),
               ),
+              title: Text(
+                'Flutter Developer',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              subtitle: Text('i9Experts • Jan 2025 – Present'),
             ),
-            SizedBox(height: 20),
-            FrostedCard(
-              child: ListTile(
-                title: Text(
-                  'Flutter Instructor',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                subtitle: Text('Aptech IIC • 2025'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AboutTab extends StatelessWidget {
-  const AboutTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: FrostedCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'About Me',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF00E5FF),
-                ),
-              ),
-              SizedBox(height: 12),
-              Text(
-                'I’m M. Raees Hashmi — a passionate Flutter Developer crafting intuitive and performant apps. '
-                'I focus on clean code, fluid UIs, and delightful digital experiences with Flutter, Firebase, and APIs.',
-                style: TextStyle(height: 1.6, color: Colors.white70),
-              ),
-            ],
           ),
-        ),
+        ],
       ),
     );
   }
