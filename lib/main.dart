@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void main() => runApp(RaeesPortfolioApp());
+void main() => runApp(const RaeesPortfolioApp());
 
 class RaeesPortfolioApp extends StatelessWidget {
+  const RaeesPortfolioApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Raees Hashmi - Flutter Developer',
+      title: 'M. Raees Hashmi - Flutter Developer',
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0A0A0F),
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
-      home: PortfolioHome(),
+      home: const PortfolioHome(),
     );
   }
 }
 
 class PortfolioHome extends StatefulWidget {
+  const PortfolioHome({super.key});
+
   @override
   State<PortfolioHome> createState() => _PortfolioHomeState();
 }
@@ -28,9 +32,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
   final PageController _pageController = PageController();
-
   final tabs = ['Home', 'Skills', 'Education', 'Experience', 'About'];
-
   late AnimationController _bgController;
 
   @override
@@ -51,6 +53,8 @@ class _PortfolioHomeState extends State<PortfolioHome>
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -61,6 +65,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
                 TopNavBar(
                   tabs: tabs,
                   currentIndex: currentIndex,
+                  isMobile: isMobile,
                   onTap: (i) {
                     setState(() => currentIndex = i);
                     _pageController.animateToPage(
@@ -99,102 +104,175 @@ class _PortfolioHomeState extends State<PortfolioHome>
 class TopNavBar extends StatelessWidget {
   final List<String> tabs;
   final int currentIndex;
+  final bool isMobile;
   final Function(int) onTap;
 
   const TopNavBar({
+    super.key,
     required this.tabs,
     required this.currentIndex,
     required this.onTap,
+    required this.isMobile,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 32,
-        vertical: 22,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 16 : 22,
       ).copyWith(bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () => onTap(0),
-            child: Row(
+      child: isMobile
+          ? Column(
               children: [
-                const NeonBadge(),
-                const SizedBox(width: 12),
-                Text(
-                  'Raees Hashmi',
-                  style: GoogleFonts.poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 1.1,
+                GestureDetector(
+                  onTap: () => onTap(0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const NeonBadge(),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Raees Hashmi',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: tabs.asMap().entries.map((entry) {
+                      final active = entry.key == currentIndex;
+                      return GestureDetector(
+                        onTap: () => onTap(entry.key),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            gradient: active
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color(0xFF7C4DFF),
+                                      Color(0xFF00E5FF),
+                                    ],
+                                  )
+                                : null,
+                            border: Border.all(
+                              color: active
+                                  ? Colors.transparent
+                                  : Colors.white.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            entry.value,
+                            style: TextStyle(
+                              color: active ? Colors.white : Colors.white70,
+                              fontWeight: active
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
-            ),
-          ),
-          Row(
-            children: tabs.asMap().entries.map((entry) {
-              final active = entry.key == currentIndex;
-              return MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => onTap(entry.key),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: active
-                          ? const LinearGradient(
-                              colors: [Color(0xFF7C4DFF), Color(0xFF00E5FF)],
-                            )
-                          : null,
-                      border: Border.all(
-                        color: active
-                            ? Colors.transparent
-                            : Colors.white.withOpacity(0.3),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () => onTap(0),
+                  child: Row(
+                    children: [
+                      const NeonBadge(),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Raees Hashmi',
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: 1.1,
+                        ),
                       ),
-                    ),
-                    child: AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 200),
-                      style: TextStyle(
-                        color: active ? Colors.white : Colors.white70,
-                        fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                        fontSize: 14,
-                        letterSpacing: 0.7,
-                      ),
-                      child: Text(entry.value),
-                    ),
+                    ],
                   ),
                 ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+                Row(
+                  children: tabs.asMap().entries.map((entry) {
+                    final active = entry.key == currentIndex;
+                    return GestureDetector(
+                      onTap: () => onTap(entry.key),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: active
+                              ? const LinearGradient(
+                                  colors: [
+                                    Color(0xFF7C4DFF),
+                                    Color(0xFF00E5FF),
+                                  ],
+                                )
+                              : null,
+                          border: Border.all(
+                            color: active
+                                ? Colors.transparent
+                                : Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          entry.value,
+                          style: TextStyle(
+                            color: active ? Colors.white : Colors.white70,
+                            fontWeight: active
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
     );
   }
 }
 
 class NeonBadge extends StatelessWidget {
-  const NeonBadge();
+  const NeonBadge({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF7C4DFF), Color(0xFF00E5FF)],
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF00E5FF).withOpacity(0.4),
@@ -215,7 +293,7 @@ class NeonBadge extends StatelessWidget {
 
 class AnimatedGradientBackground extends StatelessWidget {
   final AnimationController controller;
-  const AnimatedGradientBackground({required this.controller});
+  const AnimatedGradientBackground({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -268,12 +346,11 @@ class AnimatedGradientBackground extends StatelessWidget {
 
 class GlowCircle extends StatelessWidget {
   final Color color;
-  const GlowCircle({required this.color});
+  const GlowCircle({super.key, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(seconds: 3),
+    return Container(
       width: 400,
       height: 400,
       decoration: BoxDecoration(
@@ -293,96 +370,99 @@ class GlowCircle extends StatelessWidget {
 // ================= HOME TAB ===================
 
 class HomeTab extends StatelessWidget {
-  const HomeTab();
+  const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: AnimatedOpacity(
-        opacity: 1,
-        duration: const Duration(seconds: 1),
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '👋 Hello, I’m',
-                style: TextStyle(fontSize: 24, color: Colors.white70),
-              ),
-              const SizedBox(height: 8),
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Color(0xFF7C4DFF), Color(0xFF00E5FF)],
-                ).createShader(bounds),
-                child: const Text(
-                  'Raees Hashmi',
-                  style: TextStyle(
-                    fontSize: 52,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+    final isMobile = MediaQuery.of(context).size.width < 700;
+    final textAlign = isMobile ? TextAlign.center : TextAlign.start;
+    final crossAlign = isMobile
+        ? CrossAxisAlignment.center
+        : CrossAxisAlignment.start;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(32),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: crossAlign,
+          children: [
+            const Text(
+              '👋 Hello, I’m',
+              style: TextStyle(fontSize: 22, color: Colors.white70),
+            ),
+            const SizedBox(height: 8),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [Color(0xFF7C4DFF), Color(0xFF00E5FF)],
+              ).createShader(bounds),
+              child: const Text(
+                'Raees Hashmi',
+                style: TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Flutter Developer @ i9Experts',
-                style: TextStyle(fontSize: 20, color: Colors.white70),
-              ),
-              const SizedBox(height: 30),
-              const FrostedCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.rocket_launch,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Flutter Developer @ i9Experts',
+              style: TextStyle(fontSize: 18, color: Colors.white70),
+            ),
+            const SizedBox(height: 30),
+            const FrostedCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.rocket_launch,
+                        color: Color(0xFF00E5FF),
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Currently Working On',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
                           color: Color(0xFF00E5FF),
-                          size: 20,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Currently Working On',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF00E5FF),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'SmartVan — revolutionizing smart transportation using Flutter. Building performant, maintainable, and user-friendly apps.',
-                      style: TextStyle(height: 1.5, color: Colors.white70),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-              Wrap(
-                spacing: 12,
-                children: const [
-                  SocialButton(
-                    icon: Icons.email,
-                    label: 'Email',
-                    url: 'mailto:raees@example.com',
+                      ),
+                    ],
                   ),
-                  SocialButton(
-                    icon: Icons.code,
-                    label: 'GitHub',
-                    url: 'https://github.com/yourusername',
-                  ),
-                  SocialButton(
-                    icon: Icons.work,
-                    label: 'LinkedIn',
-                    url: 'https://linkedin.com/in/yourprofile',
+                  SizedBox(height: 12),
+                  Text(
+                    'SmartVan — revolutionizing smart transportation using Flutter.',
+                    style: TextStyle(height: 1.5, color: Colors.white70),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 30),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              alignment: WrapAlignment.center,
+              children: const [
+                SocialButton(
+                  icon: Icons.email,
+                  label: 'Email',
+                  url: 'mailto:raees@example.com',
+                ),
+                SocialButton(
+                  icon: Icons.code,
+                  label: 'GitHub',
+                  url: 'https://github.com/yourusername',
+                ),
+                SocialButton(
+                  icon: Icons.work,
+                  label: 'LinkedIn',
+                  url: 'https://linkedin.com/in/yourprofile',
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -393,17 +473,16 @@ class HomeTab extends StatelessWidget {
 
 class FrostedCard extends StatelessWidget {
   final Widget child;
-  const FrostedCard({required this.child});
+  const FrostedCard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 25),
@@ -420,6 +499,7 @@ class SocialButton extends StatefulWidget {
   final String url;
 
   const SocialButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.url,
@@ -434,6 +514,8 @@ class _SocialButtonState extends State<SocialButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -442,8 +524,7 @@ class _SocialButtonState extends State<SocialButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           transform: Matrix4.identity()
-            ..scale(_hovered ? 1.05 : 1.0)
-            ..translate(0, _hovered ? -2.0 : 0),
+            ..scale(_hovered && !isMobile ? 1.05 : 1.0),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -481,7 +562,7 @@ class _SocialButtonState extends State<SocialButton> {
 // ================= OTHER TABS ===================
 
 class SkillsTab extends StatelessWidget {
-  const SkillsTab();
+  const SkillsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -495,35 +576,33 @@ class SkillsTab extends StatelessWidget {
       'Node.js Basics',
       'OOP / DSA',
     ];
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Wrap(
-          spacing: 18,
-          runSpacing: 18,
-          alignment: WrapAlignment.center,
-          children: skills
-              .map(
-                (skill) => FrostedCard(
-                  child: Text(
-                    skill,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(32),
+      child: Wrap(
+        spacing: 18,
+        runSpacing: 18,
+        alignment: WrapAlignment.center,
+        children: skills
+            .map(
+              (skill) => FrostedCard(
+                child: Text(
+                  skill,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
                   ),
                 ),
-              )
-              .toList(),
-        ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
 }
 
 class EducationTab extends StatelessWidget {
-  const EducationTab();
+  const EducationTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -532,7 +611,6 @@ class EducationTab extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             FrostedCard(
               child: ListTile(
@@ -561,7 +639,7 @@ class EducationTab extends StatelessWidget {
 }
 
 class ExperienceTab extends StatelessWidget {
-  const ExperienceTab();
+  const ExperienceTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -570,7 +648,6 @@ class ExperienceTab extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             FrostedCard(
               child: ListTile(
@@ -599,7 +676,7 @@ class ExperienceTab extends StatelessWidget {
 }
 
 class AboutTab extends StatelessWidget {
-  const AboutTab();
+  const AboutTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -621,7 +698,7 @@ class AboutTab extends StatelessWidget {
               SizedBox(height: 12),
               Text(
                 'I’m M. Raees Hashmi — a passionate Flutter Developer crafting intuitive and performant apps. '
-                'My focus is writing clean code, designing fluid UIs, and delivering delightful digital experiences with Flutter, Firebase, and APIs.',
+                'I focus on clean code, fluid UIs, and delightful digital experiences with Flutter, Firebase, and APIs.',
                 style: TextStyle(height: 1.6, color: Colors.white70),
               ),
             ],
