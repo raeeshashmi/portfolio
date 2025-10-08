@@ -53,8 +53,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isMobile = width < 700;
+    final isMobile = MediaQuery.of(context).size.width < 700;
 
     return Scaffold(
       body: Stack(
@@ -71,15 +70,17 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     setState(() => currentIndex = i);
                     _pageController.animateToPage(
                       i,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 600),
+                      curve: Curves.easeInOutCubicEmphasized,
                     );
                   },
                 ),
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    onPageChanged: (i) => setState(() => currentIndex = i),
+                    onPageChanged: (index) {
+                      setState(() => currentIndex = index);
+                    },
                     children: const [
                       HomeTab(),
                       SkillsTab(),
@@ -98,7 +99,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
   }
 }
 
-// ================= NAVBAR =================
+// ================= TOP NAV ===================
 
 class TopNavBar extends StatelessWidget {
   final List<String> tabs;
@@ -118,44 +119,48 @@ class TopNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 40,
-        vertical: isMobile ? 16 : 20,
-      ),
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 16 : 22,
+      ).copyWith(bottom: 10),
       child: isMobile
           ? Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const NeonBadge(),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Raees Hashmi',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                GestureDetector(
+                  onTap: () => onTap(0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const NeonBadge(),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Raees Hashmi',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: tabs.asMap().entries.map((entry) {
                       final active = entry.key == currentIndex;
                       return GestureDetector(
                         onTap: () => onTap(entry.key),
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(25),
                             gradient: active
                                 ? const LinearGradient(
                                     colors: [
@@ -202,6 +207,7 @@ class TopNavBar extends StatelessWidget {
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
+                          letterSpacing: 1.1,
                         ),
                       ),
                     ],
@@ -213,14 +219,14 @@ class TopNavBar extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => onTap(entry.key),
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
+                        duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 18,
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(30),
                           gradient: active
                               ? const LinearGradient(
                                   colors: [
@@ -269,8 +275,8 @@ class NeonBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00E5FF).withOpacity(0.5),
-            blurRadius: 18,
+            color: const Color(0xFF00E5FF).withOpacity(0.4),
+            blurRadius: 16,
             spreadRadius: 3,
           ),
         ],
@@ -283,7 +289,7 @@ class NeonBadge extends StatelessWidget {
   }
 }
 
-// ================= BACKGROUND =================
+// ================= BACKGROUND ===================
 
 class AnimatedGradientBackground extends StatelessWidget {
   final AnimationController controller;
@@ -308,6 +314,11 @@ class AnimatedGradientBackground extends StatelessWidget {
                 Color.lerp(
                   const Color(0xFF302B63),
                   const Color(0xFF2C5364),
+                  controller.value,
+                )!,
+                Color.lerp(
+                  const Color(0xFF24243E),
+                  const Color(0xFF000428),
                   controller.value,
                 )!,
               ],
@@ -356,60 +367,47 @@ class GlowCircle extends StatelessWidget {
   }
 }
 
-// ================= HOME =================
+// ================= HOME TAB ===================
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isMobile = width < 700;
+    final isMobile = MediaQuery.of(context).size.width < 700;
     final textAlign = isMobile ? TextAlign.center : TextAlign.start;
     final crossAlign = isMobile
         ? CrossAxisAlignment.center
         : CrossAxisAlignment.start;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 60,
-        vertical: 40,
-      ),
+      padding: const EdgeInsets.all(32),
       child: Center(
         child: Column(
           crossAxisAlignment: crossAlign,
           children: [
-            Text(
+            const Text(
               '👋 Hello, I’m',
-              textAlign: textAlign,
-              style: TextStyle(
-                fontSize: isMobile ? 18 : 22,
-                color: Colors.white70,
-              ),
+              style: TextStyle(fontSize: 22, color: Colors.white70),
             ),
             const SizedBox(height: 8),
             ShaderMask(
               shaderCallback: (bounds) => const LinearGradient(
                 colors: [Color(0xFF7C4DFF), Color(0xFF00E5FF)],
               ).createShader(bounds),
-              child: Text(
+              child: const Text(
                 'Raees Hashmi',
-                textAlign: textAlign,
                 style: TextStyle(
-                  fontSize: isMobile ? 36 : 54,
+                  fontSize: 48,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            Text(
+            const Text(
               'Flutter Developer @ i9Experts',
-              textAlign: textAlign,
-              style: TextStyle(
-                fontSize: isMobile ? 16 : 18,
-                color: Colors.white70,
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.white70),
             ),
             const SizedBox(height: 30),
             const FrostedCard(
@@ -471,7 +469,7 @@ class HomeTab extends StatelessWidget {
   }
 }
 
-// ================= COMPONENTS =================
+// ================= REUSABLE WIDGETS ===================
 
 class FrostedCard extends StatelessWidget {
   final Widget child;
@@ -487,7 +485,7 @@ class FrostedCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.white10),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 25),
+          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 25),
         ],
       ),
       child: child,
@@ -499,6 +497,7 @@ class SocialButton extends StatefulWidget {
   final IconData icon;
   final String label;
   final String url;
+
   const SocialButton({
     super.key,
     required this.icon,
@@ -511,26 +510,26 @@ class SocialButton extends StatefulWidget {
 }
 
 class _SocialButtonState extends State<SocialButton> {
-  bool hovered = false;
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
 
     return MouseRegion(
-      onEnter: (_) => !isMobile ? setState(() => hovered = true) : null,
-      onExit: (_) => !isMobile ? setState(() => hovered = false) : null,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: () async => await launchUrl(Uri.parse(widget.url)),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 300),
           transform: Matrix4.identity()
-            ..scale(hovered && !isMobile ? 1.05 : 1.0),
+            ..scale(_hovered && !isMobile ? 1.05 : 1.0),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             gradient: LinearGradient(
-              colors: hovered
+              colors: _hovered
                   ? [
                       const Color(0xFF7C4DFF).withOpacity(0.2),
                       const Color(0xFF00E5FF).withOpacity(0.2),
@@ -538,7 +537,7 @@ class _SocialButtonState extends State<SocialButton> {
                   : [Colors.white10, Colors.white12],
             ),
             border: Border.all(
-              color: hovered
+              color: _hovered
                   ? const Color(0xFF00E5FF)
                   : Colors.white.withOpacity(0.2),
             ),
@@ -560,7 +559,7 @@ class _SocialButtonState extends State<SocialButton> {
   }
 }
 
-// ================= OTHER TABS =================
+// ================= OTHER TABS ===================
 
 class SkillsTab extends StatelessWidget {
   const SkillsTab({super.key});
@@ -580,8 +579,8 @@ class SkillsTab extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Wrap(
-        spacing: 16,
-        runSpacing: 16,
+        spacing: 18,
+        runSpacing: 18,
         alignment: WrapAlignment.center,
         children: skills
             .map(
@@ -607,30 +606,34 @@ class EducationTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(32),
-      shrinkWrap: true,
-      children: const [
-        FrostedCard(
-          child: ListTile(
-            title: Text(
-              'Bachelor of Science (BSc), Computer Science',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            FrostedCard(
+              child: ListTile(
+                title: Text(
+                  'Bachelor of Science (BSc), Computer Science',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                subtitle: Text('University of Karachi (UBIT) • 2021 – 2025'),
+              ),
             ),
-            subtitle: Text('University of Karachi (UBIT) • 2021 – 2025'),
-          ),
-        ),
-        SizedBox(height: 20),
-        FrostedCard(
-          child: ListTile(
-            title: Text(
-              'Flutter Internship',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            SizedBox(height: 20),
+            FrostedCard(
+              child: ListTile(
+                title: Text(
+                  'Flutter Internship',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                subtitle: Text('NexinIt • Jan 2024 – Jun 2024'),
+              ),
             ),
-            subtitle: Text('NexinIt • Jan 2024 – Jun 2024'),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -640,30 +643,34 @@ class ExperienceTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(32),
-      shrinkWrap: true,
-      children: const [
-        FrostedCard(
-          child: ListTile(
-            title: Text(
-              'Flutter Developer',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            FrostedCard(
+              child: ListTile(
+                title: Text(
+                  'Flutter Developer',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                subtitle: Text('i9Experts • SmartVan Project'),
+              ),
             ),
-            subtitle: Text('i9Experts • SmartVan Project'),
-          ),
-        ),
-        SizedBox(height: 20),
-        FrostedCard(
-          child: ListTile(
-            title: Text(
-              'Flutter Instructor',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            SizedBox(height: 20),
+            FrostedCard(
+              child: ListTile(
+                title: Text(
+                  'Flutter Instructor',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                subtitle: Text('Aptech IIC • 2025'),
+              ),
             ),
-            subtitle: Text('Aptech IIC • 2025'),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -673,13 +680,13 @@ class AboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(32),
-      children: const [
-        FrostedCard(
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: FrostedCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: const [
               Text(
                 'About Me',
                 style: TextStyle(
@@ -697,7 +704,7 @@ class AboutTab extends StatelessWidget {
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
