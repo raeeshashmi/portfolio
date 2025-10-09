@@ -11,7 +11,7 @@ class RaeesPortfolioApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'M. Raees Hashmi - Flutter Developer',
+      title: 'Raees Hashmi - Flutter Developer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0A0A0F),
@@ -314,7 +314,10 @@ class HomeAboutTab extends StatelessWidget {
                   ],
                 ),
                 child: ClipOval(
-                  child: Image.asset('images/profile.jpeg', fit: BoxFit.cover),
+                  child: Image.asset(
+                    'assets/images/profile.jpeg',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
 
@@ -352,8 +355,7 @@ class HomeAboutTab extends StatelessWidget {
               // Description
               const FrostedCard(
                 child: Text(
-                  'A creative Flutter developer with a passion for crafting smooth, modern, and high-performance mobile apps. '
-                  'I love transforming complex ideas into clean, responsive, and visually stunning user experiences — powered by Flutter, Firebase, and REST APIs.',
+                  'A creative Flutter developer with a passion for crafting smooth, modern, and high-performance mobile apps.',
                   textAlign: TextAlign.center,
                   style: TextStyle(height: 1.6, color: Colors.white70),
                 ),
@@ -496,7 +498,6 @@ class SkillsTab extends StatelessWidget {
       'GetX / Provider / Bloc',
       'Firebase / Supabase',
       'REST API Integration',
-      'State Management',
       'App Deployment',
       'Git & GitHub',
       'UI/UX Design',
@@ -545,20 +546,20 @@ class EducationTab extends StatelessWidget {
           child: Column(
             children: const [
               InfoCard(
-                imagePath: 'images/uni_logo.png',
+                imagePath: 'assets/images/uni_logo.png',
                 title: 'University of Karachi',
                 subtitle: 'Bachelor of Science in Computer Science',
                 duration: 'Jan 2021 – Dec 2024',
               ),
               InfoCard(
-                imagePath: 'images/college_logo.jpeg',
+                imagePath: 'assets/images/college_logo.jpeg',
                 title: 'Bahria College Karsaz Karachi',
                 subtitle: 'Intermediate in Pre-Engineering',
                 duration: 'Aug 2018 – May 2020',
               ),
               InfoCard(
-                imagePath: 'images/school_logo.jpeg',
-                title: 'White House English School',
+                imagePath: 'assets/images/school_logo.jpeg',
+                title: 'White House English Secondary School',
                 subtitle: 'Matriculation in Science',
                 duration: 'Apr 2016 – Mar 2018',
               ),
@@ -585,8 +586,8 @@ class ExperienceTab extends StatelessWidget {
             children: [
               // ================== Company Section ==================
               const InfoCard(
-                imagePath: 'images/i9_logo.jpeg',
-                title: 'i9Experts (Private) Limited',
+                imagePath: 'assets/images/i9_logo.jpeg',
+                title: 'i9Experts',
                 subtitle: 'Flutter Developer',
                 duration: 'Jan 2025 – Present',
               ),
