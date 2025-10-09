@@ -617,7 +617,7 @@ class ExperienceTab extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Image.asset(
-                            'images/van_logo.png',
+                            'assets/images/van_logo.png',
                             fit: BoxFit.cover,
                             height: 80,
                           ),
